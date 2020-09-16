@@ -292,7 +292,7 @@ namespace DataAccess.Data.Services
                     Sender = sender,
                     CcUsers = new List<string>(),
                     BccUsers = new List<string>(),
-                    Body = "Test email",
+                    Body = "Your team has been changed successfully.",
                 });
             }
             catch(Exception ex)
@@ -314,7 +314,7 @@ namespace DataAccess.Data.Services
                     Sender = sender,
                     CcUsers = new List<string>(),
                     BccUsers = new List<string>(),
-                    Body = "Test email",
+                    Body = $"Your team {teamId} is successfully registered. Your secretToken is {newToken}",
                 };
 
                 return _emailNotificationService.Notify(notificationContent);
