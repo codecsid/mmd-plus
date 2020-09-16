@@ -2,54 +2,56 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
-using System.Text;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Threading.Tasks;
 
 namespace NotificationService
 {
     public class EmailNotificationService : INotificationService
     {
         private SmtpClient Client { get; set; }
+        private SendGridClient sgClient { get; set; }
 
-        public EmailNotificationService(SmtpClient client)
+        public EmailNotificationService(SendGridClient sgClient)
         {
-            Client = client;
+            this.sgClient = sgClient;
         }
 
         public bool Notify(NotificationContent content)
         {
-            if(string.IsNullOrEmpty(content.Sender)) throw new ArgumentNullException("Sender");
-            if (content.Recievers == null || content.Recievers.Count == 0) throw new ArgumentNullException("Receivers");
+            try {
+                var from = new EmailAddress("singh.shraddhesh@gmail.com", "Shraddhesh Singh");
+                var subject = content.Subject;
+                var recieverList = new List<EmailAddress>();
+                foreach(var email in content.Recievers){
+                    recieverList.Add(new EmailAddress(email));
+                }
+                var plainTextContent = content.Body;
+                var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
+                var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, recieverList, subject, plainTextContent, htmlContent);
+                
+                return SendEmail(msg).Result;
 
-            MailMessage mail = new MailMessage
-            {
-                From = new MailAddress(content.Sender)
-            };
-
-            foreach (var item in content.CcUsers)
-            {
-                mail.CC.Add(new MailAddress(item));
-            };
-
-            foreach (var item in content.Recievers)
-            {
-                mail.To.Add(new MailAddress(item));
-            };
-
-
-            mail.Subject = content.Subject;
-            mail.Body = content.Body;
-            mail.IsBodyHtml = true;
-
-            try
-            {
-                Client.Send(mail);
             }
-            catch (SmtpFailedRecipientException)
-            { 
-            
+            catch(Exception){
+                return false;
             }
-            return true;
+        }
 
+        private async Task<bool> SendEmail(SendGridMessage msg)
+        {
+            try{
+                var response = await sgClient.SendEmailAsync(msg).ConfigureAwait(false);
+
+                if(response.StatusCode < System.Net.HttpStatusCode.BadRequest)
+                    return true;
+
+                return false;
+            }    
+            catch(Exception){
+                return false;
+            }
         }
     }
 }

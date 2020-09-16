@@ -282,33 +282,48 @@ namespace DataAccess.Data.Services
 
         private bool SendTeamChangeEmail(string teamId, List<string> teamMembers)
         {
-            var sender = Environment.GetEnvironmentVariable("FROM_ADDRESS");
+            try {
+                var sender = Environment.GetEnvironmentVariable("FROM_ADDRESS");
 
-            return _emailNotificationService.Notify(new NotificationContent
+                return _emailNotificationService.Notify(new NotificationContent
+                {
+                    Subject = "CodeComp - Team Change Successful",
+                    Recievers = teamMembers,
+                    Sender = sender,
+                    CcUsers = new List<string>(),
+                    BccUsers = new List<string>(),
+                    Body = "Test email",
+                });
+            }
+            catch(Exception ex)
             {
-                Subject = "CodeComp - Team Change Successful",
-                Recievers = teamMembers,
-                Sender = sender,
-                CcUsers = new List<string>(),
-                BccUsers = new List<string>(),
-                Body = "Test email",
-            });
+                _logger.LogError($"EmailNotification for Team Change Failed | {teamId} | {ex}");
+                return false;
+            }
         }
 
         private bool SendRegistrationEmail(string teamId, string newToken, ICollection<User> users)
         {
-            var sender = Environment.GetEnvironmentVariable("FROM_ADDRESS");
-            var notificationContent = new NotificationContent
+            try
             {
-                Subject = "CodeComp - Team Registration Successful",
-                Recievers = users.Select(u => u.UserId).ToList(),
-                Sender = sender,
-                CcUsers = new List<string>(),
-                BccUsers = new List<string>(),
-                Body = "Test email",
-            };
+                var sender = Environment.GetEnvironmentVariable("FROM_ADDRESS");
+                var notificationContent = new NotificationContent
+                {
+                    Subject = "CodeComp - Team Registration Successful",
+                    Recievers = users.Select(u => u.UserId).ToList(),
+                    Sender = sender,
+                    CcUsers = new List<string>(),
+                    BccUsers = new List<string>(),
+                    Body = "Test email",
+                };
 
-            return _emailNotificationService.Notify(notificationContent);
+                return _emailNotificationService.Notify(notificationContent);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"EmailNotification for Team Registration Failed | {teamId} | {ex}");
+                return false;
+            }
         }
 
         public bool EmailIdIsUnique(string userId, string teamId)

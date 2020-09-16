@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NotificationService;
+using SendGrid;
 
 namespace mmd_plus
 {
@@ -79,6 +80,12 @@ namespace mmd_plus
                     };
                 });
             }
+
+            var sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+
+            services.AddSingleton(factory => {
+                return new SendGridClient(sendGridApiKey);
+            });
 
             string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION") ?? Configuration.GetConnectionString("CodeCompDatabase");
 
