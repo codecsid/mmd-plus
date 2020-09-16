@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/$PROJECT_ID/dotnet'
+  args: ['publish', '-c', 'Release', './Mmd.Ui/mmd-plus.sln']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy', './Mmd.Ui/bin/Release/netcoreapp3.1/publish/app.yaml']

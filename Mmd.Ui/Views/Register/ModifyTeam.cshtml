@@ -43,33 +43,37 @@
                         <span asp-validation-for="SecretToken" class="text-danger"></span>
                     </div>
                     <div id="teamMembers">
-                        @for (var i = 0; i < Model.TeamMembers.Count; i++)
-                        {
-                            var currentLabel = $"TeamMember {i + 1}";
-                            var buttonId = $"btnDelField_{i}";
-                            var divId = $"teamMemberDiv_{i}";
-                            <div class="row align-items-end" id="@divId">
-                                <div class="form-group col-sm-7">
-                                    <label asp-for="TeamMembers[i].EmailId" class="control-label" style="margin-bottom: .1rem;font-weight: 500;">@currentLabel</label>
-                                    <input type="text" class="form-control mb-3" asp-for="TeamMembers[i].EmailId" />
-                                    <span asp-validation-for="TeamMembers[i].EmailId" class="text-danger"></span>
-                                </div>
-                                <div id="delBtnDiv_0">
+                    @for (var i = 0; i < Model.TeamMembers.Count; i++)
+                    {
+                        var currentLabel = $"TeamMember {i + 1}";
+                        var buttonId = $"btnDelField_{i}";
+                        var divId = $"teamMemberDiv_{i}";
+                        <div id="@divId">
+                            <div class="form-group">
+                                <label asp-for="TeamMembers[i].EmailId" class="control-label" style="margin-bottom: .1rem;font-weight: 500;">@currentLabel</label>
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control mb-3" asp-for="TeamMembers[i].EmailId" />
+                                    </div>
+                                    <div id="delBtnDiv_0">
                                     @if (i > 0)
                                     {
                                         <div class="col-sm-2">
                                             <button id="@buttonId" type="button" class="btn btn-danger">Delete</button>
                                         </div>
                                     }
-                                </div>
-                                @if (i == 0 && Model.TeamMembers.Count < 5)
-                                {
-                                    <div class="col-sm-2">
-                                        <button id="btnAddField" type="button" class="btn btn-success">Add</button>
                                     </div>
-                                }
+                                    @if (i == 0 && Model.TeamMembers.Count < 5)
+                                    {
+                                        <div class="col-sm-2">
+                                            <button id="btnAddField" type="button" class="btn btn-success">Add</button>
+                                        </div>
+                                    }
+                                </div>
+                                <span asp-validation-for="TeamMembers[i].EmailId" class="text-danger"></span>
                             </div>
-                        }
+                        </div>
+                    }
                     </div>
                     <div class="form-group">
                         <input id="modifyButton" type="submit" value="Modify Team" class="btn btn-primary" disabled />
@@ -115,36 +119,40 @@
     }
 
     GenerateFields = () => {
-        $('#teamMembers').empty();
-    for (var n = 0; n < teamMembers.length; n++) {
-        var $fields = $('#teamMembers');
-        var newTeamMemberField = `\
-                    <div class="row align-items-end" id="teamMemberDiv_${n}">\
-                        <div class="form-group col-sm-7">\
-                            <label class="control-label" style="margin-bottom: .1rem;font-weight: 500;" for="TeamMembers_${n}__EmailId">TeamMember ${n + 1}</label>\
-                            <input type="text" class="form-control mb-3" data-val="true" data-val-email="The EmailId field is not a valid e-mail address." data-val-required="Email Id Required" id="TeamMembers_${n}__EmailId" name="TeamMembers[${n}].EmailId" value = "${teamMembers[n]}"/>\
-                            <span class="text-danger field-validation-valid" data-valmsg-for="TeamMembers[${n}].EmailId" data-valmsg-replace="true"></span>\
-                        </div>\
-                    `
-            if (n > 0)
-                newTeamMemberField = newTeamMemberField +
-                    `<div id="delBtnDiv_${n}">\
-                            <div class="col-sm-2">\
-                                <button id="btnDelField_${n}" type = "button" class="btn btn-danger"> Delete</button>\
+            $('#teamMembers').empty();
+            for (var n = 0; n < teamMembers.length; n++) {
+                var $fields = $('#teamMembers');
+                var newTeamMemberField = `\
+                        <div id="teamMemberDiv_${n}">\
+                            <div class="form-group">\
+                                <label class="control-label" style="margin-bottom: .1rem;font-weight: 500;" for="TeamMembers_${n}__EmailId">TeamMember ${n + 1}</label>\
+                                <div class="row">\
+                                    <div class="col-sm-7">\
+                                        <input type="text" class="form-control mb-3" data-val="true" data-val-email="The EmailId field is not a valid e-mail address." data-val-required="Email Id Required" id="TeamMembers_${n}__EmailId" name="TeamMembers[${n}].EmailId" value = "${teamMembers[n]}"/>\
+                                    </div>\
+                        `
+                if (n > 0)
+                    newTeamMemberField = newTeamMemberField +
+                        `<div id="delBtnDiv_${n}">\
+                                <div class="col-sm-2">\
+                                    <button id="btnDelField_${n}" type = "button" class="btn btn-danger"> Delete</button>\
+                                </div>\
+                            </div >\
+                            `
+                if (n == 0 && fieldCount < 5)
+                    newTeamMemberField = newTeamMemberField +
+                        `<div class="col-sm-2">\
+                                <button id="btnAddField" type="button" class="btn btn-success">Add</button>\
                             </div>\
-                        </div >\
-                        `
-            if (n == 0 && fieldCount < 5)
-                newTeamMemberField = newTeamMemberField +
-                    `<div class="col-sm-2">\
-                            <button id="btnAddField" type="button" class="btn btn-success">Add</button>\
-                        </div>\
-                        `
-            newTeamMemberField += `</div>`
+                            `
+                newTeamMemberField += `</div>\
+                <span class="text-danger field-validation-valid" data-valmsg-for="TeamMembers[${n}].EmailId" data-valmsg-replace="true"></span>\
+                            </div>\
+                            </div>`
 
-            $(newTeamMemberField).appendTo($fields);
+                $(newTeamMemberField).appendTo($fields);
+            }
         }
-    }
 
     IsSame = (list1, dict1) => {
 

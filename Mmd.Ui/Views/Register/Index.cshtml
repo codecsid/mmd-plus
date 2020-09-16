@@ -24,40 +24,43 @@
                     <span asp-validation-for="Location" class="text-danger"></span>
                 </div>
 
-            <div id="teamMembers">
+                <div id="teamMembers">
                 @for (var i = 0; i < Model.TeamMembers.Count; i++)
                 {
                     var currentLabel = $"TeamMember {i + 1}";
                     var buttonId = $"btnDelField_{i}";
                     var divId = $"teamMemberDiv_{i}";
-                    <div class="row align-items-end" id="@divId">
-                        <div class="form-group col-sm-7">
+                    <div id="@divId">
+                        <div class="form-group">
                             <label asp-for="TeamMembers[i].EmailId" class="control-label" style="margin-bottom: .1rem;font-weight: 500;">@currentLabel</label>
-                            <input type="text" class="form-control mb-3" asp-for="TeamMembers[i].EmailId" />
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <input type="text" class="form-control mb-3" asp-for="TeamMembers[i].EmailId" />
+                                </div>
+                                <div id="delBtnDiv_0">
+                                @if (i > 0)
+                                {
+                                    <div class="col-sm-2">
+                                        <button id="@buttonId" type="button" class="btn btn-danger">Delete</button>
+                                    </div>
+                                }
+                                </div>
+                                @if (i == 0 && Model.TeamMembers.Count < 5)
+                                {
+                                    <div class="col-sm-2">
+                                        <button id="btnAddField" type="button" class="btn btn-success">Add</button>
+                                    </div>
+                                }
+                            </div>
                             <span asp-validation-for="TeamMembers[i].EmailId" class="text-danger"></span>
                         </div>
-                        <div id="delBtnDiv_0">
-                            @if (i > 0)
-                            {
-                                <div class="col-sm-2">
-                                    <button id="@buttonId" type="button" class="btn btn-danger">Delete</button>
-                                </div>
-                            }
-                        </div>
-                            @if (i == 0 && Model.TeamMembers.Count < 5)
-                            {
-                                <div class="col-sm-2">
-                                    <button id="btnAddField" type="button" class="btn btn-success">Add</button>
-                                </div>
-                            }
                     </div>
                 }
-            </div>
-
-                <div class="form-group row">
-                    <input type="submit" value="Register" class="btn btn-primary" />
-                    <span>Already Registered? </span>
-                    @Html.ActionLink(" Modify Team", "ModifyTeam");
+                </div>
+                <div class="form-group justify-content-start w-75">
+                    <input type="submit" value="Register" class="form-control col-sm-auto mb-3 btn btn-primary" />
+                    <span class="col-sm-auto">Already Registered? </span>
+                    @Html.ActionLink("Modify Team", "ModifyTeam", "Register", null, new { @class = "col-sm-auto"})
                 </div>
             </form>
         </div>
@@ -90,169 +93,173 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    var teamMembers = new Array()
+        var teamMembers = new Array()
 
-    var fieldCount = 0
+        var fieldCount = 0
 
-    GetIndex = (context) => {
-        // works when element id is in form string_index
-        var id = $(context).attr("id");
-        var c = id.split('_')[1]
-        var index = parseInt(c)
-        return index
-    }
+        GetIndex = (context) => {
+            // works when element id is in form string_index
+            var id = $(context).attr("id");
+            var c = id.split('_')[1]
+            var index = parseInt(c)
+            return index
+        }
 
-    GenerateFields = () => {
-        $('#teamMembers').empty();
-        for (var n = 0; n < teamMembers.length; n++) {
-            var $fields = $('#teamMembers');
-            var newTeamMemberField = `\
-                    <div class="row align-items-end" id="teamMemberDiv_${n}">\
-                        <div class="form-group col-sm-7">\
-                            <label class="control-label" style="margin-bottom: .1rem;font-weight: 500;" for="TeamMembers_${n}__EmailId">TeamMember ${n + 1}</label>\
-                            <input type="text" class="form-control mb-3" data-val="true" data-val-email="The EmailId field is not a valid e-mail address." data-val-required="Email Id Required" id="TeamMembers_${n}__EmailId" name="TeamMembers[${n}].EmailId" value = "${teamMembers[n]}"/>\
-                            <span class="text-danger field-validation-valid" data-valmsg-for="TeamMembers[${n}].EmailId" data-valmsg-replace="true"></span>\
-                        </div>\
-                    `
-            if (n > 0)
-                newTeamMemberField = newTeamMemberField +
-                    `<div id="delBtnDiv_${n}">\
-                            <div class="col-sm-2">\
-                                <button id="btnDelField_${n}" type = "button" class="btn btn-danger"> Delete</button>\
+        GenerateFields = () => {
+            $('#teamMembers').empty();
+            for (var n = 0; n < teamMembers.length; n++) {
+                var $fields = $('#teamMembers');
+                var newTeamMemberField = `\
+                        <div id="teamMemberDiv_${n}">\
+                            <div class="form-group">\
+                                <label class="control-label" style="margin-bottom: .1rem;font-weight: 500;" for="TeamMembers_${n}__EmailId">TeamMember ${n + 1}</label>\
+                                <div class="row">\
+                                    <div class="col-sm-7">\
+                                        <input type="text" class="form-control mb-3" data-val="true" data-val-email="The EmailId field is not a valid e-mail address." data-val-required="Email Id Required" id="TeamMembers_${n}__EmailId" name="TeamMembers[${n}].EmailId" value = "${teamMembers[n]}"/>\
+                                    </div>\
+                        `
+                if (n > 0)
+                    newTeamMemberField = newTeamMemberField +
+                        `<div id="delBtnDiv_${n}">\
+                                <div class="col-sm-2">\
+                                    <button id="btnDelField_${n}" type = "button" class="btn btn-danger"> Delete</button>\
+                                </div>\
+                            </div >\
+                            `
+                if (n == 0 && fieldCount < 5)
+                    newTeamMemberField = newTeamMemberField +
+                        `<div class="col-sm-2">\
+                                <button id="btnAddField" type="button" class="btn btn-success">Add</button>\
                             </div>\
-                        </div >\
-                        `
-            if (n == 0 && fieldCount < 5)
-                newTeamMemberField = newTeamMemberField +
-                    `<div class="col-sm-2">\
-                            <button id="btnAddField" type="button" class="btn btn-success">Add</button>\
-                        </div>\
-                        `
-            newTeamMemberField += `</div>`
+                            `
+                newTeamMemberField += `</div>\
+                <span class="text-danger field-validation-valid" data-valmsg-for="TeamMembers[${n}].EmailId" data-valmsg-replace="true"></span>\
+                            </div>\
+                            </div>`
 
-            $(newTeamMemberField).appendTo($fields);
-        }
-    }
-
-    $(document).ready(function () {
-
-        var statesAvailable = @Html.Raw(ViewBag.CurrentIds);
-
-        $.each(statesAvailable, function (i) {
-            teamMembers.push(statesAvailable[i]);
-            fieldCount++;
-        });
-
-        if ('@Model.Message.Message'.length > 0) {
-            if ('@Model.Message.Type' === 'success')
-                $('.modal-content').css('background-color', '#339933')
-            if ('@Model.Message.Type' === 'error')
-                $('.modal-content').css('background-color', '#ff4d4d')
-
-            $('#exampleModal').modal('show')
+                $(newTeamMemberField).appendTo($fields);
+            }
         }
 
-        $('#teamMembers').on("click", '#btnAddField', function (e) {
-            e.preventDefault();
-            fieldCount++;
-            teamMembers.push("");
-            GenerateFields()
-        });
+        $(document).ready(function () {
 
-        $('#teamMembers').on("click", 'button[id*="btnDelField"]', function (e) {
-            e.preventDefault();
-            fieldCount--;
-            teamMembers.splice(GetIndex(this), 1)
-            GenerateFields()
-        })
+            var statesAvailable = @Html.Raw(ViewBag.CurrentIds);
 
-        $('#teamMembers').on("input", 'input[name*="TeamMembers"]', function (e) {
-            e.preventDefault();
-            if (Object.keys($(this).rules()).length == 0) {
-                $(this).rules("add", {
-                    required: true,
-                    email: true,
-                    maxlength: 60,
-                    regex: emailValidationRegex,
-                    messages: {
-                        email: 'Invalid Email Address',
-                        required: 'Field Required',
-                        maxlength: 'Character limit exceeded',
-                        regex: 'Invalid Email Address'
-                    }
-                })
+            $.each(statesAvailable, function (i) {
+                teamMembers.push(statesAvailable[i]);
+                fieldCount++;
+            });
+
+            if ('@Model.Message.Message'.length > 0) {
+                if ('@Model.Message.Type' === 'success')
+                    $('.modal-content').css('background-color', '#339933')
+                if ('@Model.Message.Type' === 'error')
+                    $('.modal-content').css('background-color', '#ff4d4d')
+
+                $('#exampleModal').modal('show')
             }
-            var index = GetIndex(this)
-            teamMembers[index] = $(this).val()
+
+            $('#teamMembers').on("click", '#btnAddField', function (e) {
+                e.preventDefault();
+                fieldCount++;
+                teamMembers.push("");
+                GenerateFields()
+            });
+
+            $('#teamMembers').on("click", 'button[id*="btnDelField"]', function (e) {
+                e.preventDefault();
+                fieldCount--;
+                teamMembers.splice(GetIndex(this), 1)
+                GenerateFields()
+            })
+
+            $('#teamMembers').on("input", 'input[name*="TeamMembers"]', function (e) {
+                e.preventDefault();
+                if (Object.keys($(this).rules()).length == 0) {
+                    $(this).rules("add", {
+                        required: true,
+                        email: true,
+                        maxlength: 60,
+                        regex: emailValidationRegex,
+                        messages: {
+                            email: 'Invalid Email Address',
+                            required: 'Field Required',
+                            maxlength: 'Character limit exceeded',
+                            regex: 'Invalid Email Address'
+                        }
+                    })
+                }
+                var index = GetIndex(this)
+                teamMembers[index] = $(this).val()
+            });
+
+            $('#index thead tr').clone(true).appendTo('#index thead');
+
+            $('#index thead tr:eq(1) th').each(function (i) {
+                var title = $(this).text();
+
+                switch (title) {
+                    case "Type":
+                        $(this).html('some html to render');
+
+                        $('select', this).on('change', function () {
+                            if (table.column(i).search() !== this.value) {
+                                table.column(i).search(this.value).draw();
+                            }
+                        });
+                        break;
+                    case "Id":
+                    case "RegistrationTime":
+                        $(this).html('    ');
+                        break;
+                    default:
+                        $(this).html('<input style="width: 100%;" type="text" placeholder="' + title + '"/>');
+
+                        $('input', this).on('keyup change', function () {
+                            if (table.column(i).search !== this.value) {
+                                table.column(i).search(this.value).draw();
+                            }
+                        });
+                        break;
+                }
+            });
+
+            var table = $('#index').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "orderCellsTop": true,
+                "fixedHeader": true,
+                "scrollY": 400,
+                "scrollX": true,
+                //"scrollCollapse": true,
+                "fixedColumns": true,
+                "sDom": '<"top"l>rt<"bottom"ip><"clear">',
+                "ajax": {
+                    "url": '@Url.Action("LoadData", "Register")',
+                    "dataType": "json"
+                },
+                "order": [[2, "desc"]],
+                "columnDefs": [
+                    { targets: 2, render: function (data, type, row) { return displayDate(data); } }
+                ],
+                "columns": [
+                    //{ "data": "id", "width": "30px" },
+                    { "data": "teamId", "autoWidth": true },
+                    { "data": "location", "autoWidth": true },
+                    { "data": "registrationTime", "autoWidth": true },
+                    @*{
+                        "data": "name", "width": "200px",
+                        "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+                            $(nTd).html("<a href='@Url.Action("Manage", "IndexManagement")/" + oData.id + "'>");
+                        }
+
+                    }*@
+                ],
+
+            })
         });
 
-        $('#index thead tr').clone(true).appendTo('#index thead');
-
-        $('#index thead tr:eq(1) th').each(function (i) {
-            var title = $(this).text();
-
-            switch (title) {
-                case "Type":
-                    $(this).html('some html to render');
-
-                    $('select', this).on('change', function () {
-                        if (table.column(i).search() !== this.value) {
-                            table.column(i).search(this.value).draw();
-                        }
-                    });
-                    break;
-                case "Id":
-                case "RegistrationTime":
-                    $(this).html('    ');
-                    break;
-                default:
-                    $(this).html('<input style="width: 100%;" type="text" placeholder="' + title + '"/>');
-
-                    $('input', this).on('keyup change', function () {
-                        if (table.column(i).search !== this.value) {
-                            table.column(i).search(this.value).draw();
-                        }
-                    });
-                    break;
-            }
-        });
-
-        var table = $('#index').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "orderCellsTop": true,
-            "fixedHeader": true,
-            "scrollY": 400,
-            "scrollX": true,
-            //"scrollCollapse": true,
-            "fixedColumns": true,
-            "sDom": '<"top"l>rt<"bottom"ip><"clear">',
-            "ajax": {
-                "url": '@Url.Action("LoadData", "Register")',
-                "dataType": "json"
-            },
-            "order": [[2, "desc"]],
-            "columnDefs": [
-                { targets: 2, render: function (data, type, row) { return displayDate(data); } }
-            ],
-            "columns": [
-                //{ "data": "id", "width": "30px" },
-                { "data": "teamId", "autoWidth": true },
-                { "data": "location", "autoWidth": true },
-                { "data": "registrationTime", "autoWidth": true },
-                @*{
-                    "data": "name", "width": "200px",
-                    "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
-                        $(nTd).html("<a href='@Url.Action("Manage", "IndexManagement")/" + oData.id + "'>");
-                    }
-
-                }*@
-            ],
-
-        })
-    });
-
-</script>
+    </script>
 }

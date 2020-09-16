@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess.Model\DataAccess.Model.csproj" />
+    <ProjectReference Include="..\NotificationService\NotificationService.csproj" />
   </ItemGroup>
 
 </Project>

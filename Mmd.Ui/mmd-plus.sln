@@ -4,9 +4,11 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mmd-plus", "mmd-plus.csproj", "{67324259-F5B9-417B-9984-354AD67E0B84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Model", "..\DataAccess.Model\DataAccess.Model.csproj", "{F99E6B8B-CB71-47AE-93B5-2E2919857F7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess.Model", "..\DataAccess.Model\DataAccess.Model.csproj", "{F99E6B8B-CB71-47AE-93B5-2E2919857F7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess.Data", "..\DataAccess.Data\DataAccess.Data.csproj", "{DBDBA5F3-63F9-40DE-8C52-1093A5A79764}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess.Data", "..\DataAccess.Data\DataAccess.Data.csproj", "{DBDBA5F3-63F9-40DE-8C52-1093A5A79764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "..\NotificationService\NotificationService.csproj", "{2A3EC4F0-C519-4F57-B01B-2D81B0E90048}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{DBDBA5F3-63F9-40DE-8C52-1093A5A79764}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBDBA5F3-63F9-40DE-8C52-1093A5A79764}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBDBA5F3-63F9-40DE-8C52-1093A5A79764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A3EC4F0-C519-4F57-B01B-2D81B0E90048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A3EC4F0-C519-4F57-B01B-2D81B0E90048}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A3EC4F0-C519-4F57-B01B-2D81B0E90048}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A3EC4F0-C519-4F57-B01B-2D81B0E90048}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

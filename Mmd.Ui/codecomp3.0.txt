@@ -1,3 +1,4 @@
 instanceid: codecomp3-1-db-test-1
 dbPassword: codecompdb123
-cloudsqlproxy connection command: cloud_sql_proxy_x64.exe -instances=codecomp3-1:asia-southeast1:codecomp3-1-db-test-1=tcp:5432 -credential_file=codecomp3-1-4c03b31e9fd6.json
+cloudsqlproxy connection command: 
+cloud_sql_proxy_x64.exe -instances=codecomp3-1:asia-southeast1:codecomp3-1-db-test-1=tcp:5432 -credential_file=codecomp3-1-4c03b31e9fd6.json

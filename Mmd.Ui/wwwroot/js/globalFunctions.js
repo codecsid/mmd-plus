@@ -5,4 +5,4 @@
     return time.local().format(displayFormat);
 }
 
-var emailValidationRegex = /^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(db|google)\.com$/;
+var emailValidationRegex = /^[a-zA-Z0-9_.+-]+@(?:(?:[a-zA-Z0-9-]+\.)?[a-zA-Z]+\.)?(db|gmail|google)\.com$/;
