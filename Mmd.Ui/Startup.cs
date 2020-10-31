@@ -48,6 +48,7 @@ namespace mmd_plus
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IRegistrationService, RegistrationService>();
+            services.AddScoped<ILiveService, LiveService>();
 
             services.AddScoped<EmailNotificationService>();
 
@@ -66,7 +67,6 @@ namespace mmd_plus
 
             if (!string.IsNullOrWhiteSpace(smtpHost))
             {
-                //services.AddScoped<INotificationService,EmailNotificationService>();
                 var fromAddress = new MailAddress(Environment.GetEnvironmentVariable("FROM_ADDRESS"), "Meghraj@CodeComp");
                 var fromPassword = Environment.GetEnvironmentVariable("FROM_PASSWORD");
                 services.AddSingleton(factory =>

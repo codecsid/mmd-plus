@@ -1,0 +1,393 @@
+@model LiveViewModel
+@{ Layout = "_Layout"; ViewBag.Title = "Live";}
+
+<div id="start" class="container">
+
+    <div id="refresh" class="row justify-content-center">
+
+        <div class="col-lg-6" style="padding: 10px;">
+            <h5 class="text-center">Current Score</h5>
+            <h6 id="currentStatus" class="text-center">Round :  | SecretLength : | Status : </h6>
+            <table id="current" class="table row-border no-footer" style="width:100%;">
+                <thead>
+                    <tr style="background-color:black; color:white; height:45px;">
+                        <th style="font-size:12px">Rank</th>
+                        <th style="font-size:12px">Team</th>
+                        <th style="font-size:12px">Location</th>
+                        <th style="font-size:12px">Score</th>
+                        <th style="font-size:12px">Lifelines</th>
+                        <th style="font-size:12px">Status</th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="loadingDiv" style="height:70vh">
+                <img class="loadingSpinner" src='img/loading.gif' alt='loading' />
+            </div>
+        </div>
+
+
+        <div class="col-lg-6" style="padding: 10px;">
+            <h5 class="text-center">Total Score</h5>
+            <h6 id="totalStatus" class="text-center">GameID : </h6>
+            <table id="total" class="table row-border no-footer" style="width:100%;">
+                <thead>
+                    <tr style="background-color:black; color:white; height:45px;">
+                        <th style="font-size:12px">Rank</th>
+                        <th style="font-size:12px">Team</th>
+                        <th style="font-size:12px">Location</th>
+                        <th style="font-size:12px">Score</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="loadingDiv" style="height:70vh">
+                <img class="loadingSpinner" src='img/loading.gif'  alt='loading' />
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        var currentTable, totalTable, minsLeft, secsLeft
+
+        function countryFlags(country) {
+            var country_code = ""
+
+            switch (country) {
+                case 'India-Pune':
+                case 'India-Bangalore':
+                case 'India-Mumbai':
+                case 'India-Jaipur':
+                    country_code = 'in';
+                    break;
+
+                case 'UK-London':
+                case 'UK-Birmingham':
+                    country_code = 'gb';
+                    break;
+
+                case 'Germany':
+                    country_code = 'de';
+                    break;
+
+                case 'USA-New York':
+                case 'USA-Cary':
+                    country_code = 'us';
+                    break;
+
+                case 'Singapore':
+                    country_code = 'sg';
+                    break;
+
+                case 'Russia-Moscow':
+                case 'Russia-St. Petersburg':
+                    country_code = 'ru';
+                    break;
+
+                case 'Hong Kong':
+                    country_code = 'hk';
+                    break;
+
+                case 'Australia-Sydney':
+                case 'Australia-Melbourne':
+                    country_code = 'au';
+                    break;
+
+                case 'Japan-Tokyo':
+                    country_code = 'jp';
+                    break;
+
+                case 'Malaysia':
+                    country_code = 'my';
+                    break;
+
+                case 'Italy':
+                    country_code = 'it';
+                    break;
+
+                case 'Switzerland':
+                    country_code = 'ch';
+                    break;
+
+                case 'Canada':
+                    country_code = 'ca';
+                    break;
+
+                case 'Vietnam':
+                    country_code = 'vn';
+                    break;
+
+                case 'Ireland':
+                    country_code = 'ie';
+                    break;
+
+                case 'Romania':
+                    country_code = 'ro';
+                    break;
+                default:
+                    return "Other";
+            }
+
+            return country_code;
+
+        }
+
+        function getTimeRemaining(phaseStartTime, totalPhaseTime) {
+
+            const timeElapsed = Date.parse(new Date()) - Date.parse(phaseStartTime)
+            const timeLeft = (totalPhaseTime*1000) - timeElapsed
+            const seconds = Math.floor((timeLeft / 1000) % 60);
+            const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+
+            return {
+                timeLeft,
+                minutes,
+                seconds
+            };
+        }
+
+        function setHeader(data, totalPhaseTime) {
+
+            function updateClock() {
+                const t = getTimeRemaining(data.phaseStartTime, totalPhaseTime);
+                
+                if (t.timeLeft <= 0) {
+                    if (typeof timeinterval != 'undefined') { clearInterval(timeinterval); }
+                    t.minutes = 0;
+                    t.seconds = 0;
+                }
+
+                minsLeft = ('0' + t.minutes).slice(-2);
+                secsLeft = ('0' + t.seconds).slice(-2);
+
+                $('#totalStatus').html("GameID : " + data.gameId)
+
+                $('#currentStatus').html("Round : " + data.roundNumber + " | SecretLength : " + data.secretLength + " | Status : " + data.phase + " | " + minsLeft + ":" + secsLeft)
+               
+            }
+
+            updateClock();
+            var timeinterval = setInterval(updateClock, 1000);
+
+            
+        }
+
+       
+        function generateTables() {
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("LoadData","Live")',
+                dataType: 'json',
+                data: {},
+                beforeSend: function () {
+                    if (typeof totalTable === 'undefined') {
+                        $('.loadingDiv').show()
+                    }
+                },
+                success: function (data) {
+
+                    var totalPhaseTime;
+
+                    if (data.phase == "Joining") {
+                        totalPhaseTime = data.joiningDuration
+                    }
+
+                    else if (data.phase == "Running") {
+                        totalPhaseTime = data.runningDuration
+                    }
+
+                    else {
+                        totalPhaseTime = data.finishedDuration
+                    }
+
+                    setHeader(data, totalPhaseTime);
+
+                    if (typeof totalTable === 'undefined') {
+
+                        $('.loadingDiv').hide()
+
+                        totalTable = $('#total').DataTable({
+                            "data": data.participants_TotalScore,
+                            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                                $("td:first", nRow).html(iDisplayIndex + 1);
+                                return nRow;
+                            },
+                            "fixedHeader": true,
+                            "scrollY": "70vh",
+                            "scrollX": true,
+                            "fixedColumns": false,
+                            "sDom": 't',
+                            "order": [],
+                            "columnDefs": [
+                                {
+                                    "targets": [1,2],
+                                    "className": "text-left",
+                                },
+                                { targets: "_all", orderable: false, className: 'dt-center' }
+                            ],
+                            "columns": [
+                                { data: null },
+                                {
+                                    data: "teamId",
+                                    render: function (data) { return data.toUpperCase(); }
+                                },
+                                {
+                                    data: "location",
+                                    render: function (data, type, row, meta) {
+                                        if (row.isRobot)
+                                            return '<img src="img/robot.jpg" style="height:30px; width:35px;margin-top:-3px;" alt="Robot" />Robot'
+
+                                        var country = countryFlags(data);
+
+                                        if (data == 'Other' || country == 'Other') {
+                                            return "Other"
+                                        }
+
+                                        var flagSrc = "https://www.countryflags.io/" + country + "/shiny/32.png"
+
+                                        return '<img src="' + flagSrc + '" alt="' + data + '" style="height:20px; width:20px;margin-top:-3px;" /> ' + data
+
+                                    }
+                                },
+                                { data: "score" },
+                                {
+                                    render: function (data, type, row, meta) {
+                                        if (meta.row == 0 && row.roundNumber == 10) {
+                                            return '<img src="img/gold.png" style="height:45px; width:35px;" alt="Silver Medal"/>';
+
+                                        }
+
+                                        if (meta.row == 1 && row.roundNumber == 10) {
+                                            return '<img src="img/silver.png" style="height:45px; width:35px;" alt="Silver Medal" />';
+                                        }
+
+                                        if (meta.row == 2 && row.roundNumber == 10) {
+                                            return '<img src="img/bronze.png" style="height:45px; width:35px;" alt="Bronze Medal" />';
+                                        }
+
+                                        return "";
+                                    }
+                                }
+                            ]
+
+                        })
+                    }
+                    else {
+                        totalTable.clear().rows.add(data.participants_TotalScore).draw();
+                    }
+
+
+                    if (typeof currentTable === 'undefined') {
+
+                        currentTable = $('#current').DataTable({
+                            "data": data.participants_CurrentScore,
+                            "fnRowCallback": function (nRow, aData, iDisplayIndex) {
+                                $("td:first", nRow).html(iDisplayIndex + 1);
+                                return nRow;
+                            },
+                            "fixedHeader": true,
+                            "scrollY": "70vh",
+                            "scrollX": true,
+                            "fixedColumns": false,
+                            "sDom": 't',
+                            "order": [],
+                            "columnDefs": [
+                                {
+                                    "targets": [1, 2], 
+                                    "className": "text-left"
+                                },
+                                { targets: "_all", orderable: false, className: 'dt-center' }
+                            ],
+                            "columns": [
+                                { data: null },
+                                {
+                                    data: "teamId",
+                                    render: function (data) { return data.toUpperCase(); }
+
+                                },
+                                {
+                                    data: "location",
+                                    render: function (data,type, row,meta) {
+                                        if (row.isRobot)
+                                            return '<img src="img/robot.jpg" style="height:30px; width:35px;margin-top:-3px;" alt="Robot" />Robot'
+
+                                        var country = countryFlags(data);
+
+                                        if (data == 'Other' || country == 'Other') {
+                                            return "Other"
+                                        }
+
+                                        var flagSrc = "https://www.countryflags.io/" + country + "/shiny/32.png"
+
+                                        return '<img src="' + flagSrc + '" alt="' + data + '" style="height:20px; width:20px;margin-top:-3px;" /> ' + data
+
+                                    }
+                                },
+                                { data: "score" },
+                                { data: "lifelines" },
+                                {
+                                    data: "isAlive",
+                                    render: function (data, type, row, meta) {
+
+                                        if (!data)
+                                        {
+                                            return '<img style="height:35px; width:30px;" src="img/dead.jpg" alt="dead" />'
+                                        }
+                                        else { 
+
+                                            if (data && row.phase == "Joining") {
+                                                return '<span style="color: green;">JOINED</span>';
+                                            }
+                                            if (data && row.phase == "Running") {
+                                                return '<img style="height:45px; width:65px;" src="img/ninja.gif" alt="fighting..." />'
+                                            }
+                                            if (data && row.phase == "Finished") {
+                                                return '<span style="color: green;">SURVIVED</span>';
+                                            }
+                                        }
+
+                                        return "";
+                                    }
+
+                                },
+                            ],
+
+                        })
+                    }
+                    else {
+                        currentTable.clear().rows.add(data.participants_CurrentScore).draw();
+                    }
+
+                },
+                error: {}
+            });
+
+        }
+
+
+
+        function noDelaySetInterval(func, interval) {
+            func();
+            return setInterval(func, interval);
+        }
+
+        function startSetInterval() {
+            noDelaySetInterval(generateTables, 5000);
+        }
+
+
+        $(document).ready(function () {
+
+            startSetInterval();
+
+            });
+
+
+
+    </script>
+}

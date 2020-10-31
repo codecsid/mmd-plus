@@ -50,3 +50,17 @@ code {
 .card img {
     max-width: 50rem;
 }
+
+.loadingSpinner {
+    margin: 50%;
+    height: 40px;
+    width: 40px;
+}
+
+
+#current tr, #total tr {
+    height: 65px;
+    font-size: 12px;
+    font-weight: 500;
+}
+

@@ -28,7 +28,7 @@ namespace NotificationService
                     recieverList.Add(new EmailAddress(email));
                 }
                 var plainTextContent = content.Body;
-                var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
+                var htmlContent = $"<strong>{content.Body}</strong>";
                 var msg = MailHelper.CreateSingleEmailToMultipleRecipients(from, recieverList, subject, plainTextContent, htmlContent);
                 
                 return SendEmail(msg).Result;

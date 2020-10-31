@@ -78,7 +78,12 @@
                     <div class="form-group">
                         <input id="modifyButton" type="submit" value="Modify Team" class="btn btn-primary" disabled />
                     </div>
-
+                    <div class="alert alert-dismissible fade show" role="alert">
+                        @Model.Message.Message
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 </form>
             }
         </div>
@@ -195,12 +200,16 @@
 
         if (modalJson && Object.keys(modalJson).length > 0 && typeof (modalJson.message) != 'undefined' && typeof (modalJson.type) != 'undefined') {
             if (modalJson.type == 'success') {
-                $('.modal-content').css('background-color', '#339933')
-                $('#exampleModal').modal('show')
+                //$('.modal-content').css('background-color', '#339933')
+                //$('#exampleModal').modal('show')
+                $('.alert').addClass('alert-success')
+                $('.alert').alert()
             }
             else if (modalJson.type == 'error') {
-                $('.modal-content').css('background-color', '#ff4d4d')
-                $('#exampleModal').modal('show')
+                //$('.modal-content').css('background-color', '#ff4d4d')
+                //$('#exampleModal').modal('show')
+                $('.alert').addClass('alert-danger')
+                $('.alert').alert()
             }
         }
 
