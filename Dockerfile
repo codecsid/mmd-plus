@@ -5,15 +5,14 @@ WORKDIR /app
 
 # Install production dependencies.
 # Copy csproj and restore as distinct layers.
-COPY *.csproj ./
-RUN dotnet restore
+COPY . ./
+RUN dotnet restore Mmd.Ui/mmd-plus.sln
 
 # Copy local code to the container image.
-COPY . ./
 WORKDIR /app
 
 # Build a release artifact.
-RUN dotnet publish -c Release -o out
+RUN dotnet publish Mmd.Ui/mmd-plus.sln -c Release -o out
 
 
 # Use Microsoft's official runtime .NET image.
