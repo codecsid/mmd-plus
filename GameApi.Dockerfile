@@ -6,13 +6,13 @@ WORKDIR /app
 # Install production dependencies.
 # Copy csproj and restore as distinct layers.
 COPY . ./
-RUN dotnet restore Mmd.GameController/GameController.sln
+RUN dotnet restore Mmd.GameApi/GameApi.sln
 
 # Copy local code to the container image.
 WORKDIR /app
 
 # Build a release artifact.
-RUN dotnet publish Mmd.GameController/GameController.sln -c Release -o out
+RUN dotnet publish Mmd.GameApi/GameApi.sln -c Release -o out
 
 
 # Use Microsoft's official runtime .NET image.
@@ -22,4 +22,4 @@ WORKDIR /app
 COPY --from=build /app/out ./
 
 # Run the web service on container startup.
-ENTRYPOINT ["dotnet", "Mmd.GameController.dll"]
+ENTRYPOINT ["dotnet", "Mmd.GameApi.Service.dll"]
