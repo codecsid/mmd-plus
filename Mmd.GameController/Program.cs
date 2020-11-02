@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 
 namespace Mmd.GameController
 {
@@ -69,12 +70,32 @@ namespace Mmd.GameController
 
                 serviceCollection.AddScoped<IGameControllerService, GameControllerService>();
 
- 
-                string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION") ?? configuration.GetConnectionString("CodeCompDatabase");
+
+                //string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION") ?? configuration.GetConnectionString("CodeCompDatabase");
+
+                //serviceCollection.AddDbContext<DataContext>(options =>
+                //{
+                //    options.UseNpgsql(connectionString);
+                //});
 
                 serviceCollection.AddDbContext<DataContext>(options =>
                 {
-                    options.UseNpgsql(connectionString);
+                    String dbSocketDir = Environment.GetEnvironmentVariable("DB_SOCKET_PATH") ?? "/cloudsql";
+                    String instanceConnectionName = Environment.GetEnvironmentVariable("INSTANCE_CONNECTION_NAME");
+                    var connectionString = new NpgsqlConnectionStringBuilder()
+                    {
+                        // The Cloud SQL proxy provides encryption between the proxy and instance. 
+                        SslMode = SslMode.Disable,
+                        Host = String.Format("{0}/{1}", dbSocketDir, instanceConnectionName),
+                        Username = Environment.GetEnvironmentVariable("DB_USER"), // e.g. 'my-db-user
+                        Password = Environment.GetEnvironmentVariable("DB_PASS"), // e.g. 'my-db-password'
+                        Database = Environment.GetEnvironmentVariable("DB_NAME"), // e.g. 'my-database'
+
+                    };
+                    connectionString.Pooling = true;
+
+                    var cs = connectionString.ToString();
+                    options.UseNpgsql(cs);
                 });
 
                 serviceCollection.AddHostedService<App>();
